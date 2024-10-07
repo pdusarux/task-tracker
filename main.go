@@ -18,6 +18,7 @@ type Task struct {
 
 const (
 	noTasksFoundMessage = "No tasks found"
+	taskFormatString    = "ID: %d, Description: %s, Status: %s\n"
 )
 
 func main() {
@@ -78,13 +79,37 @@ func viewTasks(tasks *[]Task) {
 	if len(*tasks) == 0 {
 		fmt.Println(noTasksFoundMessage)
 		return
-	} else {
-		fmt.Println("Tasks:")
-		for _, task := range *tasks {
-			fmt.Printf("ID: %d, Description: %s, Status: %s\n", task.ID, task.Description, task.Status)
-		}
 	}
 
+	fmt.Println("View tasks by:")
+	fmt.Println("1. All tasks")
+	fmt.Println("2. Todo")
+	fmt.Println("3. In-progress")
+	fmt.Println("4. Done")
+	fmt.Print("Choose an option (1-4): ")
+
+	var choice int
+	fmt.Scan(&choice)
+
+	fmt.Println("Tasks:")
+	switch choice {
+	case 1:
+		for _, task := range *tasks {
+			fmt.Printf(taskFormatString, task.ID, task.Description, task.Status)
+		}
+	case 2, 3, 4:
+		status := []string{"todo", "in-progress", "done"}[choice-2]
+		for _, task := range *tasks {
+			if task.Status == status {
+				fmt.Printf(taskFormatString, task.ID, task.Description, task.Status)
+			}
+		}
+	default:
+		fmt.Println("Invalid choice. Showing all tasks.")
+		for _, task := range *tasks {
+			fmt.Printf(taskFormatString, task.ID, task.Description, task.Status)
+		}
+	}
 }
 
 func updateTask(tasks *[]Task) {
